@@ -10,7 +10,7 @@ import { RouterLink } from '@angular/router';
   template: `
  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
 
- <div class="container-fluid">
+<div class="container-fluid">
     <div class="row main-content bg-success text-center">
         <div class="col-md-4 text-center company__info">
             <span class="company__logo"><h2><i class="fas fa-comment fa-3x"></i></h2></span>
