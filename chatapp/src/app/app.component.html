@@ -1,8 +1,16 @@
 <nav class="bg-primary text-white">
   <h2>WELCOME TO A CHAT APPLICATION</h2>
-  <button class="btn text-white" routerLink="login">
-   <img src="../assets/login.jpg" width="38px" height="35px">
-    LOGIN</button>
+  
+  <ng-container *ngIf="authService.currentUser | async as user;else elseblock">
+    <button class="btn text-white" (click)="logout()">
+      <img src="../assets/logout.jpg" width="38px" height="35px">
+       LOGOUT</button>
+  </ng-container>
+   <ng-template #elseblock>
+     <button class="btn text-white" routerLink="login">
+     <img src="../assets/login.jpg" width="38px" height="35px">
+     LOGIN</button>
+  </ng-template>
 </nav>
 
 <router-outlet></router-outlet>

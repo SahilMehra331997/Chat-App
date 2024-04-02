@@ -1,7 +1,10 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { CommonModule , } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { RouterLink ,Router } from '@angular/router';
+import { AuthenticationService } from '../../services/authentication.service';
+import { HotToastService } from '@ngneat/hot-toast';
+
 
 @Component({
   selector: 'app-login',
@@ -21,7 +24,7 @@ import { RouterLink } from '@angular/router';
                     <h2>Log In</h2>
                 </div>
                 <div class="row">
-                    <form [formGroup]="loginForm" class="form-group">
+                    <form [formGroup]="loginForm" class="form-group" (ngSubmit)="Submit()">
                         <div class="row">
                             <input type="text" formControlName="email" id="username" class="form__input" placeholder="Username/Email">
                             <span *ngIf="loginForm && loginForm.get('email')?.invalid && (loginForm.get('email')?.dirty || loginForm.get('email')?.touched)" class="invalid-feedback">
@@ -55,7 +58,11 @@ import { RouterLink } from '@angular/router';
   `,
   styleUrl: './login.component.css'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit{
+
+    constructor(private authService:AuthenticationService,private router:Router,private toast:HotToastService)
+     {}
+
     loginForm = new FormGroup({
         email: new FormControl('', [Validators.required, Validators.email]),
         password: new FormControl('', [Validators.required, Validators.minLength(6)]),
@@ -63,4 +70,21 @@ export class LoginComponent {
     
       get email() { return this.loginForm.get('email'); }
       get password() { return this.loginForm.get('password'); }
+
+      ngOnInit(): void {}
+
+      Submit() {
+        if(!this.loginForm.valid)
+          return;
+        const {email,password} = this.loginForm.value;
+        this.authService.login(email!,password!).pipe(this.toast.observe({
+                 success:"Logged in successfully",
+                 loading:"Logging in...",
+                 error:'Invalid username or password'
+               }))
+        .subscribe((res)=>{
+             this.router.navigate(['/home'])
+         })
+        }
+    
 }
