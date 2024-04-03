@@ -8,6 +8,7 @@
         "elseblock",
         "firebaseapp",
         "loginform",
-        "Mycomponents"
+        "Mycomponents",
+        "phonefield"
     ]
 }

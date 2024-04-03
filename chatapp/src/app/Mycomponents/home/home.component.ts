@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <h1 *ngIf="user | async as user">Welcome to the chat app : {{user.email}}!</h1>
+    <h3 *ngIf="user | async as user">Welcome {{user.displayName}}!</h3>
   `,
   styleUrl: './home.component.css'
 })

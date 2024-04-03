@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = 'chatapp';
+  title = 'EXAMPLE';
   constructor(public authService:AuthenticationService,private router:Router){}
   
   logout(){
