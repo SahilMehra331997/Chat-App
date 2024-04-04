@@ -3,11 +3,12 @@
   
   <ng-container *ngIf="authService.currentUser | async as user;else elseblock">
         <div class="dropdown">
-          <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-            {{user.displayName}}<i class="fa fa-caret-down"></i>
+           <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+            <img [src]="user.photoURL" height="30px" width="30px" class="rounded-circle" > {{user.displayName}}<i class="fa fa-caret-down"></i>
           </button>
           <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            <li><a class="dropdown-item" routerLink="login" (click)="logout()">LOGOUT</a></li>
+            <li><a class="dropdown-item" routerLink="/profile">Profile</a></li>
+            <li><a class="dropdown-item" routerLink="/login" (click)="logout()">Logout</a></li>
           </ul>
         </div>
   </ng-container>

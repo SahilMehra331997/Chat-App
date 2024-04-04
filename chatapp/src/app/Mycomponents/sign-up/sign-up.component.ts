@@ -99,7 +99,7 @@ export class SignUpComponent implements OnInit {
   constructor(private authService:AuthenticationService,private toast:HotToastService,private router:Router){}
 
   signUpForm = new FormGroup({
-     name: new FormControl('', [Validators.required,Validators.pattern("^[A-Za-z][A-Za-z0-9]{4,10}$")]),
+     name: new FormControl('', [Validators.required,Validators.pattern("^[A-Za-z][A-Za-z0-9]{2,10}$")]),
      email: new FormControl('', [Validators.required, Validators.email]),
      phone: new FormControl('', [Validators.required, Validators.pattern("^[0-9]{10}$")]),
      password: new FormControl('', [Validators.required, Validators.minLength(6)]),

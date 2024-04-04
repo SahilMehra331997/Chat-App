@@ -4,3 +4,7 @@ nav{
     padding: 10px;
     align-items: center;
 }
+
+.dropdown-item:hover{
+    background-color: rgb(169, 169, 169);
+}
