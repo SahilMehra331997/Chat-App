@@ -5,10 +5,8 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   template: `
-    <p>
-      landing works!
-    </p>
   `,
+
   styleUrl: './landing.component.css'
 })
 export class LandingComponent {

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Auth, UserInfo, authState, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from '@angular/fire/auth';
-import { Observable, concat, concatMap, from, of, switchMap } from 'rxjs';
+import { Observable, concatMap, from, of, switchMap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'

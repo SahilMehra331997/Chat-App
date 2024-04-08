@@ -3,3 +3,29 @@
    justify-content: center;
    text-align: center;
 }
+
+input{
+	border-color: rgb(173, 172, 172);
+}
+
+.container-l{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.form-control{
+	width: 100%;
+	border:0px solid transparent;
+	border-radius: 0;
+	border-bottom: 1px solid #aaa;
+	padding: 1em .5em .5em;
+	padding-left: 2em;
+	outline:none;
+	margin:1.5em auto;
+	transition: all .5s ease;
+}
+.form-control:focus{
+	border-bottom-color: #0d6efd;
+	box-shadow: 0 0 5px rgba(0,80,80,.4); 
+	border-radius: 4px;
+}

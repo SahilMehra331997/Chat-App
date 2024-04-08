@@ -24,7 +24,7 @@ export function passwordsMatchValidator():ValidatorFn {
 <div class="container-fluid">
     <div class="row main-content bg-success text-center">
         <div class="col-md-4 text-center company__info">
-            <!-- <span class="company__logo"><h2><i class="fas fa-comment fa-3x"></i></h2></span> -->
+            <span class="company__logo"><h2><i class="fas fa-comment fa-3x"></i></h2></span>
         </div>
         <div class="col-md-8 col-xs-12 col-sm-12 login_form ">
             <div class="container-fluid">

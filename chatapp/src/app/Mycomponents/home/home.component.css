@@ -1,0 +1,39 @@
+.container{
+    display:flex;
+    height: calc(100vh - 70px);
+    width:100%;
+}
+
+.chat-list{
+    width:30%;
+    margin:16px;
+    background-color:#9eacc1;
+    border-radius: 16px;
+    box-shadow: 5px 5px rgb(131, 188, 245) ;
+    overflow: hidden;
+}
+
+.messages{
+    width:70%;
+    margin:16px;
+    border-radius: 16px;
+    box-shadow: 5px 5px rgb(197, 194, 194) ;
+}
+
+.form__input{
+	width: 96%;
+	border:0px solid transparent;
+	border-radius: 0;
+	border-bottom: 0.5px solid #525252;
+	padding: 1em .5em .5em;
+	padding-left: 2em;
+	outline:none;
+	margin:.5em auto;
+    margin-left: 8px;
+	transition: all .5s ease;
+    background-color: transparent;
+}
+.form__input:focus{
+	box-shadow: 0 0 5px rgba(0,80,80,.4); 
+	border-radius: 4px;
+}
