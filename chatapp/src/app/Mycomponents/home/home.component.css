@@ -7,33 +7,82 @@
 .chat-list{
     width:30%;
     margin:16px;
+    padding: 0;
     background-color:#9eacc1;
     border-radius: 16px;
     box-shadow: 5px 5px rgb(131, 188, 245) ;
-    overflow: hidden;
+    overflow: hidden
+}
+
+
+
+.search-input {
+    margin-bottom: 20px; /* Adjust margin as needed */
+  }
+  
+  .search-input select {
+    width: 95%; /* Adjust width as needed */
+    padding: 10px; /* Adjust padding as needed */
+    font-size: 16px; /* Adjust font size as needed */
+    border: 1px solid #ccc; /* Adjust border properties as needed */
+    border-radius: 5px; /* Adjust border radius as needed */
+    box-sizing: border-box;
+    padding: 8px;
+    margin-top: 8px;
+    margin-left: 8px;
+  }
+
+.user-list{
+  gap:5px;
+  align-items:center;
+  margin: 5px;
+  padding: auto;
+  border-radius: 8px;
+}
+.user-list:hover{
+  background-color: hsl(216, 22%, 59%);
+}
+
+.container-fluid{
+    display:flex;
+    padding: 0;
+    margin-left: 0;
+    gap:5px;
+    justify-content: left;
+    padding: 5px;
+    border-radius: 5px;
+    margin-right: 15px;
+    cursor: pointer;
+}
+.container-fluid:hover{
+    background-color:hsl(216, 22%, 59%);
 }
 
 .messages{
     width:70%;
     margin:16px;
     border-radius: 16px;
-    box-shadow: 5px 5px rgb(197, 194, 194) ;
+    box-shadow: 5px 5px rgb(197, 194, 194);
+    height: 100%;
+    position: relative;
 }
 
-.form__input{
-	width: 96%;
-	border:0px solid transparent;
-	border-radius: 0;
-	border-bottom: 0.5px solid #525252;
-	padding: 1em .5em .5em;
-	padding-left: 2em;
-	outline:none;
-	margin:.5em auto;
-    margin-left: 8px;
-	transition: all .5s ease;
-    background-color: transparent;
+.chat-h{
+    display:flex;
+    width: 100%;
+    background-color: #9eacc1;
+    border-bottom: .5px solid black;
+    height:5em;
+    padding-left: 5px;
+    justify-content: left;
+    align-items: center;
+    border-radius: 10px;
+    gap:5px;
 }
-.form__input:focus{
-	box-shadow: 0 0 5px rgba(0,80,80,.4); 
-	border-radius: 4px;
+.chat-b{
+    position: absolute;
+    height: 88%;
+    width: 100%;
+    background-color: rgb(152, 182, 183);
+    border-radius: 15px;
 }

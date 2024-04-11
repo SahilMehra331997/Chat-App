@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from '../../services/authentication.service';
 import { RouterLink } from '@angular/router';
 import { User } from '@angular/fire/auth';
@@ -8,6 +8,10 @@ import { HotToastService } from '@ngneat/hot-toast';
 import { CommonModule } from '@angular/common';
 import { UserProfile } from '../../Models/user-profile';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { UserService } from '../../services/user.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
+@UntilDestroy()
 
 @Component({
   selector: 'app-profile',
@@ -23,7 +27,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
                 <div class="card-header text-center">Profile Picture</div>
                 <div class="card-body text-center">
                     <!-- Profile picture image-->
-                    <img class="img-account-profile rounded-circle mb-2" [src]="user.photoURL ?? './assets/dp.png'" alt="" width=240 height=240>
+                    <img class="img-account-profile rounded-circle mb-2" [src]="user.photoURL || './assets/dp.png'" alt="" width=240 height=240>
                     <!-- Profile picture help block-->
                     <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
                     <!-- Profile picture upload button-->
@@ -36,7 +40,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
   </div>
   <div class="container-l">
 		<div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 col-sm-12 col-xs-12 edit_information">
-			<form [formGroup]="profileForm"  method="POST">	
+			<form [formGroup]="profileForm"  method="POST" (ngSubmit)="onSubmit()">	
 				<h3 class="text-center mt-4 fw-bold">Edit Personal Information</h3>
         <div class="row">
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -48,36 +52,31 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 				<div class="row">
 					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 						<div class="form-group">
-							<input type="text" name="first_name" class="form-control" placeholder="First Name" required >
+							<input type="text" name="first_name" class="form-control" formControlName="firstName" placeholder="First Name" required >
 						</div>
 					</div>
 					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 						<div class="form-group">
-							<input type="text" name="last_name" class="form-control" placeholder="Last Name" required>
+							<input type="text" name="last_name" class="form-control" formControlName="lastName" placeholder="Last Name" required>
 						</div>
 					</div>
 				</div>
 				<div class="row">
 					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 						<div class="form-group">
-							<input type="email" name="email" class="form-control" placeholder="Email" required>
+							<input type="email" name="email" class="form-control" formControlName="email"  placeholder="Email" required>
 						</div>
 					</div>
 					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 						<div class="form-group">
-							<input type="tel" name="phone" class="form-control" placeholder="Phone" required pattern=[0-9]{10}>
+							<input type="tel" name="phone" class="form-control" placeholder="Phone" formControlName="phone" required pattern=[0-9]{10}>
 						</div>
 					</div>
 				</div>
         <div class="row">
-					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 						<div class="form-group">
-							<input type="text" name="address" class="form-control" placeholder="Address" required>
-						</div>
-					</div>
-					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-						<div class="form-group">
-							<input type="tel" name="photoURL" class="form-control" placeholder="Photo-URL" required pattern=[0-9]{10}>
+							<input type="text" name="address" class="form-control" formControlName="address" placeholder="Address" required>
 						</div>
 					</div>
 				</div>
@@ -94,9 +93,11 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
   `,
   styleUrl: './profile.component.css'
 })
-export class ProfileComponent {
+export class ProfileComponent implements OnInit{
 
-  user=this.auth.currentUser;
+
+  user=this.userService.currentUserProfile$;
+  
   profileForm = new FormGroup({
     uid:new FormControl(''),
     email:new FormControl(''),
@@ -108,15 +109,30 @@ export class ProfileComponent {
     address:new FormControl(''),
   })
 
-   constructor(private auth:AuthenticationService,private imageUploadService:ImageUploadService,private toast:HotToastService){}
+   constructor(private auth:AuthenticationService,private imageUploadService:ImageUploadService,private toast:HotToastService,private userService:UserService){}
+  
+   ngOnInit(): void {
+    this.userService.currentUserProfile$.pipe(untilDestroyed(this)).subscribe((user)=>{
+      this.profileForm.patchValue({...user})
+    })
+  }
 
-   uploadImage(event: any, user:any) {
+   uploadImage(event: any, user:UserProfile) {
      this.imageUploadService.uploadImage(event.target.files[0],`images/profile/${user.uid}`).pipe(
       this.toast.observe({
         success:"Image uploaded",
         loading:"Image Uploading ",
         error:({message})=>`${message}`
-        }),concatMap((photoURL)=>this.auth.updateProfileData({photoURL}))
+        }),concatMap((photoURL)=>this.userService.updateUser({uid:user?.uid , photoURL}))
      ).subscribe();
    }
+
+   onSubmit() {
+    const profileData=this.profileForm.value;
+    this.userService.updateUser(<UserProfile>profileData).pipe(this.toast.observe({
+        success:"Profile updated",
+        loading:"Updating Profile...",
+        error:({message})=>`${message}`
+    })).subscribe();
+    }
 }

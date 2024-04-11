@@ -1,10 +1,10 @@
 <nav class="bg-primary text-white">
   <h3>Chat-application</h3>
   
-  <ng-container *ngIf="authService.currentUser | async as user;else elseblock">
+  <ng-container *ngIf="user | async as user;else elseblock">
         <div class="dropdown">
            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-            <img [src]="user.photoURL" height="30px" width="30px" class="rounded-circle" > {{user.displayName}}<i class="fa fa-caret-down"></i>
+            <img [src]="user.photoURL || './assets/dp.png'" height="30px" width="30px" class="rounded-circle" > {{user.displayName}}<i class="fa fa-caret-down"></i>
           </button>
           <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
             <li><a class="dropdown-item" routerLink="/profile">Profile</a></li>

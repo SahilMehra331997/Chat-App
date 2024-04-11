@@ -4,6 +4,8 @@ import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModu
 import { AuthenticationService } from '../../services/authentication.service';
 import { HotToastService } from '@ngneat/hot-toast';
 import { Router } from '@angular/router';
+import { switchMap } from 'rxjs';
+import { UserService } from '../../services/user.service';
 
 export function passwordsMatchValidator():ValidatorFn {
   return (control:AbstractControl):ValidationErrors|null=>{
@@ -96,7 +98,7 @@ export function passwordsMatchValidator():ValidatorFn {
 
 export class SignUpComponent implements OnInit {
 
-  constructor(private authService:AuthenticationService,private toast:HotToastService,private router:Router){}
+  constructor(private authService:AuthenticationService,private toast:HotToastService,private router:Router,private userService:UserService){}
 
   signUpForm = new FormGroup({
      name: new FormControl('', [Validators.required,Validators.pattern("^[A-Za-z][A-Za-z0-9]{2,10}$")]),
@@ -111,7 +113,8 @@ export class SignUpComponent implements OnInit {
     if(!this.signUpForm.valid)
       return;
     const {name,email,password} = this.signUpForm.value;
-    this.authService.signUp(name!,email!,password!).pipe(this.toast.observe({
+    this.authService.signUp(email!,password!).pipe(switchMap(({user:{uid}})=>this.userService.addUser({uid,email:email!,displayName:name!})),
+    this.toast.observe({
              success:"Signed in successfully",
              loading:"Signing you in...",
              error:({message})=>`${message}`

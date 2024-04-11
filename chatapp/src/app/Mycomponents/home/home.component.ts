@@ -1,30 +1,68 @@
-import { Component } from '@angular/core';
-import { AuthenticationService } from '../../services/authentication.service';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule,FormGroup, FormsModule, FormControl } from '@angular/forms';
-import {MatAutocompleteModule} from '@angular/material/autocomplete';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { UserService } from '../../services/user.service';
+import { UserProfile } from '../../Models/user-profile';
+import { combineLatest, map, startWith } from 'rxjs';
+import { ChatsService } from '../../services/chats.service';
+import{MatFormFieldModule} from '@angular/material/form-field';
+
+
 
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule,ReactiveFormsModule,FormsModule],
+  imports: [CommonModule,ReactiveFormsModule,MatFormFieldModule],
   template: `
       <div class="container">
         <div class="chat-list">
-          <input type="text" formControlName="SearchUser" class="form__input" placeholder="Search for user...">
+          <div class="search-input">
+           <select matNativeControl placeholder="Search for users ...">
+             <option value="" disabled selected>Select a user</option>
+             <option *ngFor="let user of displayUser | async" [value]="user">{{user.displayName}}</option>
+           </select>
+          </div>
+          <div class="user-list d-flex ms-2" *ngFor="let user of displayUser | async">
+          <img class="img-account-profile rounded-circle " src="./assets/dp.png" alt="" height="30px" width="30px">  {{user.displayName}}
+          </div>
         </div>
         <div class='messages'>
+          <section class="d-flex justify-center flex-column">
+            <div class="chat-h">
+              <img class="img-account-profile rounded-circle " src="./assets/dp.png" alt="" height="40px" width="40px">{{msg}}
+            </div>
+          </section>
+          <div class="chat-b">
+
+          </div>
         </div>
       </div>
   `,
   styleUrl: './home.component.css'
 })
-export class HomeComponent {  
+export class HomeComponent implements OnInit {
 
-  form1=new FormGroup({
-    name:new FormControl(''),
-  })
-  constructor(private authService: AuthenticationService) { }
+  private userService=inject(UserService);
+  private chatService=inject(ChatsService)
+  msg:string='';
+ 
+  user$=this.userService.currentUserProfile$;//current logged in user
+  users=this.userService.allUsers;//all users
+
+  myChats=this.chatService.myChats;
+  
+  searchControl=new FormControl('')
+
+  displayUser=combineLatest([this.users,this.user$,this.searchControl.valueChanges.pipe(startWith(''))]).pipe(
+    map(([users,user,searchString])=>users!.filter(u=>u.displayName?.toLowerCase().includes(searchString!.toLowerCase())&&u.uid!==user?.uid)));//user excluding current user
+
+  constructor() { }
+  ngOnInit(): void {
+  }
+
+  createChat(user: UserProfile) {
+     this.chatService.createChat(user).subscribe();
+
+    }  
 }
