@@ -23,18 +23,16 @@ import{MatFormFieldModule} from '@angular/material/form-field';
              <option *ngFor="let user of displayUser | async" [value]="user">{{user.displayName}}</option>
            </select>
           </div>
-          <div class="user-list d-flex ms-2" *ngFor="let user of displayUser | async">
-          <img class="img-account-profile rounded-circle " src="./assets/dp.png" alt="" height="30px" width="30px">  {{user.displayName}}
+          <div class="user-list d-flex ms-2" *ngFor="let user of displayUser | async" (click)="selectedUser(user)">
+          <img class="img-account-profile rounded-circle " src="./assets/dp.png" alt="" height="30px" width="30px">{{user.displayName}}
           </div>
         </div>
         <div class='messages'>
-          <section class="d-flex justify-center flex-column">
-            <div class="chat-h">
-              <img class="img-account-profile rounded-circle " src="./assets/dp.png" alt="" height="40px" width="40px">{{msg}}
+            <div class="chat-heading">
+              <img class="img-account-profile rounded-circle " src="./assets/dp.png" alt="" height="40px" width="40px">{{user1}}
             </div>
-          </section>
-          <div class="chat-b">
-
+          <div class="chat-body">
+             
           </div>
         </div>
       </div>
@@ -44,9 +42,15 @@ import{MatFormFieldModule} from '@angular/material/form-field';
 export class HomeComponent implements OnInit {
 
   private userService=inject(UserService);
-  private chatService=inject(ChatsService)
-  msg:string='';
- 
+  private chatService=inject(ChatsService);
+  
+  user1:string="";
+
+
+  selectedUser(user:UserProfile){
+    this.user1=user.displayName as string;
+
+  }
   user$=this.userService.currentUserProfile$;//current logged in user
   users=this.userService.allUsers;//all users
 
