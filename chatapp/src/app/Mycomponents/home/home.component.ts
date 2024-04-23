@@ -6,33 +6,35 @@ import { UserProfile } from '../../Models/user-profile';
 import { combineLatest, map, startWith } from 'rxjs';
 import { ChatsService } from '../../services/chats.service';
 import{MatFormFieldModule} from '@angular/material/form-field';
-
-
-
+import {MatListModule} from '@angular/material/list';
+import { MatOptionModule } from '@angular/material/core';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule,ReactiveFormsModule,MatFormFieldModule],
+  imports: [CommonModule,FormsModule,ReactiveFormsModule,MatFormFieldModule,MatListModule,MatOptionModule,],
   template: `
       <div class="container">
         <div class="chat-list">
           <div class="search-input">
-           <select matNativeControl placeholder="Search for users ...">
-             <option value="" disabled selected>Select a user</option>
-             <option *ngFor="let user of displayUser | async" [value]="user">{{user.displayName}}</option>
-           </select>
-          </div>
-          <div class="user-list d-flex ms-2" *ngFor="let user of displayUser | async" (click)="selectedUser(user)">
-          <img class="img-account-profile rounded-circle " src="./assets/dp.png" alt="" height="30px" width="30px">{{user.displayName}}
-          </div>
+            <select placeholder="Search for users...." [(ngModel)]="selectedUser" (change)="createChat(selectedUser)">
+              <option value="" disabled selected>Select a user</option>
+              <option *ngFor="let user of displayUser | async" [ngValue]="user">{{ user.displayName }}</option>
+            </select>
+         </div>
+          
+          <mat-selection-list [multiple]="false">
+           <mat-list-option *ngFor="let chat of myChats | async" [value]="chat.id">
+           <img class="img-account-profile rounded-circle " [src]="chat.users[0].photoURL || './assets/dp.png'" alt="" height="30px" width="30px">
+              {{chat.chatName}}
+           </mat-list-option>
+          </mat-selection-list>
         </div>
         <div class='messages'>
             <div class="chat-heading">
-              <img class="img-account-profile rounded-circle " src="./assets/dp.png" alt="" height="40px" width="40px">{{user1}}
+              <img class="img-account-profile rounded-circle " src="./assets/dp.png" alt="" height="40px" width="40px">
             </div>
           <div class="chat-body">
-             
           </div>
         </div>
       </div>
@@ -43,14 +45,9 @@ export class HomeComponent implements OnInit {
 
   private userService=inject(UserService);
   private chatService=inject(ChatsService);
+
+  selectedUser!:UserProfile;
   
-  user1:string="";
-
-
-  selectedUser(user:UserProfile){
-    this.user1=user.displayName as string;
-
-  }
   user$=this.userService.currentUserProfile$;//current logged in user
   users=this.userService.allUsers;//all users
 
@@ -65,8 +62,7 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  createChat(user: UserProfile) {
-     this.chatService.createChat(user).subscribe();
-
+  createChat(user:UserProfile) {
+    this.chatService.createChat(user).subscribe();
     }  
 }
