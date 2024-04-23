@@ -8,7 +8,7 @@
     width:30%;
     margin:16px;
     padding: 0;
-    background-color:#9eacc1;
+    background-color:#9bb5dd;
     border-radius: 16px;
     box-shadow: 5px 5px rgb(131, 188, 245) ;
     overflow: hidden
@@ -60,18 +60,16 @@
 
 .messages{
     width:70%;
-    margin:16px;
+    margin:5px;
     border-radius: 16px;
-    box-shadow: 5px 5px rgb(197, 194, 194);
     height: 100%;
     position: relative;
-    
 }
 
 .chat-heading{
     display:flex;
     width: 100%;
-    background-color: #9eacc1;
+    background-color:rgb(172, 188, 240);
     border-bottom: .5px solid black;
     height:5em;
     padding-left: 5px;
@@ -82,12 +80,61 @@
 }
 .chat-body{
     position:relative;
-    height: 88%;
+    height: 86%;
     width: 100%;
-    background-color: rgb(126, 171, 172);
-    border-radius: 15px;
+    background-color:rgba(0,0,0,0.15);
+    border-radius: 10px;
     align-items: flex-end ;
 }
+
+.chat-area{
+  height:90%;
+  background-color: white;
+  padding: 15px;
+}
+
+.chat-bubble-container{
+display: flex;
+width: 100%;
+justify-content: flex-start;
+}
+
+.chat-bubble{
+  background-color: white;
+  padding-top: 8px;
+  padding-bottom: 18px;
+  padding-left: 8px;
+  padding-right: 100px;
+  border-bottom: 16px;
+  border-radius: 8px;
+}
+.chat-date{
+  position:absolute;
+  bottom: 2px;
+  right:8px;
+  font-size: 0.7rem;
+}
+.input-area{
+  width: 100%;
+  height: 10%;
+  display: flex;
+  justify-content:center;
+  padding:5px;
+  gap:.5em;
+  align-items: center;
+}
+input{
+  width: 100%;
+  border-radius: 5px;
+  border: none;
+}
+button{
+  width: 15%;
+  border: none;
+  border-radius: 5px;
+  background-color: rgb(150, 231, 150);
+}
+
 p{
   position: absolute;
   bottom: 0;
