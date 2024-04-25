@@ -20,8 +20,8 @@ export class ChatsService {
       concatMap(user=>addDoc(ref,{
         userIds:[user?.uid,otherUser?.uid],
         users:[
-          {displayName:user?.displayName??'',photoURl:user?.photoURL??''},
-          {displayName:otherUser?.displayName??'',photoURl:otherUser?.photoURL??''}]
+          {displayName:user?.displayName??'',photoURL:user?.photoURL??''},
+          {displayName:otherUser?.displayName??'',photoURL:otherUser?.photoURL??''}]
       })),
       map(ref => ref.id)
     )
@@ -42,7 +42,7 @@ export class ChatsService {
    addChatNameAndPic(currentUserId:string,chats:Chat[]):Chat[]{
      chats.forEach(chat=>{
       const otherIndex=chat.userIds.indexOf(currentUserId) === 0 ? 1 : 0;
-      const {displayName , photoURL}=chat.users[otherIndex]
+      const {displayName,photoURL}=chat.users[otherIndex]
        chat.chatName=displayName;
        chat.chatPic=photoURL;
      })

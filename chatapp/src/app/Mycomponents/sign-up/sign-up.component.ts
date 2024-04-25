@@ -109,6 +109,8 @@ export class SignUpComponent implements OnInit {
      },{validators:passwordsMatchValidator()});
    
   ngOnInit(): void {}
+
+
   Submit() {
     if(!this.signUpForm.valid)
       return;
@@ -127,6 +129,7 @@ export class SignUpComponent implements OnInit {
     get email() { return this.signUpForm.get('email'); }
       get password() { return this.signUpForm.get('password'); }
       get confirmPassword() { return this.signUpForm.get('confirmPassword'); }
+  
       
 }
 

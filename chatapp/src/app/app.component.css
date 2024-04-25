@@ -8,3 +8,11 @@ nav{
 .dropdown-item:hover{
     background-color: rgb(169, 169, 169);
 }
+
+.a-link
+{
+    font-weight: 800;
+    font-size:xx-large;
+    color: aliceblue;
+    text-decoration: none;
+}

@@ -1,35 +1,40 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule,FormGroup, FormsModule, FormControl } from '@angular/forms';
 import { UserService } from '../../services/user.service';
 import { UserProfile } from '../../Models/user-profile';
-import { combineLatest, map, startWith, switchMap } from 'rxjs';
+import { Observable, combineLatest, map, startWith, switchMap } from 'rxjs';
 import { ChatsService } from '../../services/chats.service';
 import{MatFormFieldModule} from '@angular/material/form-field';
-import {MatListModule} from '@angular/material/list';
 import { MatOptionModule } from '@angular/material/core';
-import {MatIconModule} from '@angular/material/icon'
+import {MatSelectModule} from '@angular/material/select';
+import {MatInputModule} from '@angular/material/input';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule,FormsModule,ReactiveFormsModule,MatFormFieldModule,MatListModule,MatOptionModule,MatIconModule],
+  imports: [CommonModule,FormsModule,ReactiveFormsModule,MatFormFieldModule,MatOptionModule,MatSelectModule,MatInputModule],
   template: `
       <div class="container">
         <div class="chat-list">
           <div class="search-input">
-            <select placeholder="Search for users...." [(ngModel)]="selectedUser" (change)="createChat(selectedUser)">
+            <!-- <select [(ngModel)]="selectedUser" (change)="createChat(selectedUser)" ngDefaultControl >
+              <option value="" disabled selected>Select a user</option>
+              <option *ngFor="let user of displayUser | async" [ngValue]="user">{{ user.displayName }}</option>
+            </select> -->
+            <select [(ngModel)]="selectedUser" (ngModelChange)="createChat(selectedUser)">
               <option value="" disabled selected>Select a user</option>
               <option *ngFor="let user of displayUser | async" [ngValue]="user">{{ user.displayName }}</option>
             </select>
+          </div>
+          <div>
+            <ul>
+              <li class="user-list" *ngFor="let chat of myChats | async" (click)="selectChat(chat.id)">
+                  <img class="img-account-profile rounded-circle" [src]="chat.chatPic || './assets/dp.png'" alt="" height="45px" width="45px">
+                  {{ chat.chatName }}
+              </li>
+            </ul>
          </div>
-          
-          <mat-selection-list [multiple]="false" [formControl]='chatListControl'>
-           <mat-list-option *ngFor="let chat of myChats | async" [value]="chat.id">
-           <img class="img-account-profile rounded-circle " [src]="chat.chatPic || './assets/dp.png'" alt="" height="30px" width="30px">
-              {{chat.chatName}}
-           </mat-list-option>
-          </mat-selection-list>
         </div>
         <div class='messages'>
             <div class="chat-heading" *ngIf="selectedChat$ | async as selectedChat;else noMessage">
@@ -40,11 +45,10 @@ import {MatIconModule} from '@angular/material/icon'
             <div class="chat-heading"><h2>Messages</h2>
             </div>
             </ng-template>
-          <div class="chat-body">
+          <div class="chat-body" *ngIf="display">
             <div class="chat-area">
               <div  class =chat-bubble-container *ngFor="let message of messages$ | async">
-                 <div class="chat-bubble">
-                   {{message.text}}
+                 <div class="chat-bubble">{{message.text}}
                    <span class="chat-date">{{message.sentDate}}</span>
                  </div>
               </div>
@@ -59,41 +63,43 @@ import {MatIconModule} from '@angular/material/icon'
   `,
   styleUrl: './home.component.css'
 })
-export class HomeComponent implements OnInit {
-
+export class HomeComponent {
+  display:boolean=false;
   private userService=inject(UserService);
   private chatService=inject(ChatsService);
+  selectedChat$: Observable<any>;
 
   searchControl=new FormControl('');
   chatListControl=new FormControl('');
   messageControl=new FormControl('');
-
-  selectedUser!:UserProfile;
-  
+  selectedUser:any='';
   user$=this.userService.currentUserProfile$;//current logged in user
   users=this.userService.allUsers;//all users
 
   myChats=this.chatService.myChats;
-  selectedChat$=combineLatest([this.chatListControl.valueChanges,this.myChats]).pipe(map(([value,Chats])=>Chats.find(c=>c.id===value![0])))
-  
- 
 
+  selectChat(chatId: string) {
+    this.chatListControl.setValue(chatId);
+    this.display=true;
+  }
+  
   displayUser=combineLatest([this.users,this.user$,this.searchControl.valueChanges.pipe(startWith(''))]).pipe(
     map(([users,user,searchString])=>users!.filter(u=>u.displayName?.toLowerCase().includes(searchString!.toLowerCase())&&u.uid!==user?.uid)));//user excluding current user
 
 
   messages$=this.chatListControl.valueChanges.pipe(
-     map((value)=>value![0]),
+     map((value)=>value!),
      switchMap(chatId=>this.chatService.getChatMessages$(chatId))
   )
 
-  constructor() { }
-  ngOnInit(): void {
+  constructor() { 
+    this.selectedChat$=combineLatest([this.chatListControl.valueChanges,this.myChats]).pipe(map(([value,Chats])=>Chats.find(c=>c.id===value)))
+      
   }
 
   sendMessage() {
     const message=this.messageControl.value;
-    const selectedChatId=this.chatListControl.value![0];
+    const selectedChatId=this.chatListControl.value;
     if(message && selectedChatId)
       {
         this.chatService.addChatMessage(selectedChatId, message).subscribe()
