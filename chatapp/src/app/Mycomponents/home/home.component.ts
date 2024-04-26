@@ -1,20 +1,20 @@
-import { Component, inject } from '@angular/core';
+import { Component, ElementRef, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule,FormGroup, FormsModule, FormControl } from '@angular/forms';
 import { UserService } from '../../services/user.service';
 import { UserProfile } from '../../Models/user-profile';
-import { Observable, combineLatest, map, startWith, switchMap } from 'rxjs';
+import { Observable, combineLatest, map, of, startWith, switchMap, tap } from 'rxjs';
 import { ChatsService } from '../../services/chats.service';
 import{MatFormFieldModule} from '@angular/material/form-field';
 import { MatOptionModule } from '@angular/material/core';
 import {MatSelectModule} from '@angular/material/select';
 import {MatInputModule} from '@angular/material/input';
+import { DateDisplayPipe } from "../../pipes/date-display.pipe";
 
 @Component({
-  selector: 'app-home',
-  standalone: true,
-  imports: [CommonModule,FormsModule,ReactiveFormsModule,MatFormFieldModule,MatOptionModule,MatSelectModule,MatInputModule],
-  template: `
+    selector: 'app-home',
+    standalone: true,
+    template: `
       <div class="container">
         <div class="chat-list">
           <div class="search-input">
@@ -47,11 +47,14 @@ import {MatInputModule} from '@angular/material/input';
             </ng-template>
           <div class="chat-body" *ngIf="display">
             <div class="chat-area">
-              <div  class =chat-bubble-container *ngFor="let message of messages$ | async">
+              <ng-container *ngIf="user$|async as currentUser">
+              <div  class =chat-bubble-container [ngClass]="{'sender':message.senderId===currentUser.uid}" *ngFor="let message of messages$ | async">
                  <div class="chat-bubble">{{message.text}}
-                   <span class="chat-date">{{message.sentDate}}</span>
+                   <span class="chat-date">{{message.sentDate|dateDisplay}}</span>
                  </div>
               </div>
+              <div #endOfChat></div>
+              </ng-container>
             </div>
             <div class="input-area">
                <input matInput [formControl]="messageControl" placeholder="Enter your message."/>
@@ -61,9 +64,11 @@ import {MatInputModule} from '@angular/material/input';
         </div>
       </div>
   `,
-  styleUrl: './home.component.css'
+    styleUrl: './home.component.css',
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatOptionModule, MatSelectModule, MatInputModule, DateDisplayPipe]
 })
 export class HomeComponent {
+  @ViewChild('endOfChat') endOfChat!:ElementRef;
   display:boolean=false;
   private userService=inject(UserService);
   private chatService=inject(ChatsService);
@@ -89,7 +94,8 @@ export class HomeComponent {
 
   messages$=this.chatListControl.valueChanges.pipe(
      map((value)=>value!),
-     switchMap(chatId=>this.chatService.getChatMessages$(chatId))
+     switchMap(chatId=>this.chatService.getChatMessages$(chatId)),
+     tap(()=>{this.scrollToBottom()})
   )
 
   constructor() { 
@@ -97,17 +103,34 @@ export class HomeComponent {
       
   }
 
+  scrollToBottom(){
+    setTimeout(()=>{
+      if(this.endOfChat)
+        {
+          this.endOfChat.nativeElement.scrollIntoView({behavior:"smooth"})
+        }
+    },100)
+  }
+
   sendMessage() {
     const message=this.messageControl.value;
     const selectedChatId=this.chatListControl.value;
     if(message && selectedChatId)
       {
-        this.chatService.addChatMessage(selectedChatId, message).subscribe()
+        this.chatService.addChatMessage(selectedChatId, message).subscribe(()=>{this.scrollToBottom()})
         this.messageControl.setValue('');
       }
     }
 
   createChat(user:UserProfile) {
-    this.chatService.createChat(user).subscribe();
+    this.chatService.isExistingChat(user?.uid).pipe(
+      switchMap(chatId=>{
+        if(chatId)
+          return of(chatId)
+        else
+          return this.chatService.createChat(user);
+      })
+    ).subscribe(chatId=>{this.chatListControl.setValue(chatId)})
+    
     }  
 }

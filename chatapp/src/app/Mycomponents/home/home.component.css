@@ -102,6 +102,13 @@
   height:90%;
   background-color: rgb(216, 215, 255);
   padding: 15px;
+  display: flex;
+  flex-direction: column;
+  overflow:auto;
+}
+
+.chat-area>:first-child{
+  margin-top: auto;
 }
 
 .chat-bubble-container{
@@ -110,14 +117,26 @@ width: 100%;
 justify-content: flex-start;
 }
 
+.chat-bubble-container.sender{
+  justify-content: flex-end;
+}
+.chat-bubble-container.sender>.chat-bubble{
+  background-color: #9bb5dd;
+  margin-bottom: 6px;
+}
+
+
 .chat-bubble{
   background-color: white;
   padding-top: 8px;
   padding-bottom: 18px;
   padding-left: 8px;
+  margin-bottom: 6px;
   padding-right: 100px;
   border-bottom: 16px;
   border-radius: 8px;
+  width: fit-content;
+  position: relative;
 }
 .chat-date{
   position:absolute;

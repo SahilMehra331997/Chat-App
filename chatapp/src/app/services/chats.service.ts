@@ -13,6 +13,20 @@ export class ChatsService {
   
   constructor(private firestore:Firestore , private userService:UserService) { }
 
+  isExistingChat(otherUserId:string):Observable<string|null>{
+    return this.myChats.pipe(
+      take(1),
+      map(chats =>{
+        for(let i=0;i<chats.length;i++){
+             if(chats[i].userIds.includes(otherUserId))
+              return chats[i].id
+          }
+          return null;
+      })
+    )
+
+  }
+
   createChat(otherUser:UserProfile):Observable<string>{
     const ref=collection(this.firestore,'Chats');
     return this.userService.currentUserProfile$.pipe(
