@@ -9,8 +9,8 @@ import { ProfileComponent } from './Mycomponents/profile/profile.component';
 const redirectToLogin=()=>redirectUnauthorizedTo(['login']);
 const redirectToHome=()=>redirectLoggedInTo(['home']);
 
-export const routes: Routes = [{path:"",pathMatch:"full",component:LandingComponent},
-                               {path:"sign-up",component:SignUpComponent,...canActivate(redirectToHome)},
+export const routes: Routes = [{path:"",pathMatch:"full",loadComponent:()=>import('./Mycomponents/landing/landing.component').then((c)=>c.LandingComponent)},
+                                {path:"sign-up",loadComponent:()=>import('./Mycomponents/sign-up/sign-up.component').then((c)=>c.SignUpComponent),...canActivate(redirectToHome)},
                                {path:"login",component:LoginComponent,...canActivate(redirectToHome)},
-                                {path:"home",component:HomeComponent,...canActivate(redirectToLogin)},
+                                {path:"home",loadComponent:()=>import('./Mycomponents/home/home.component').then((c)=>c.HomeComponent),...canActivate(redirectToLogin)},
                                 {path:"profile",component:ProfileComponent,...canActivate(redirectToLogin)}];
