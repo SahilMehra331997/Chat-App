@@ -121,7 +121,7 @@ export class ProfileComponent implements OnInit{
      this.imageUploadService.uploadImage(event.target.files[0],`images/profile/${user.uid}`).pipe(
       this.toast.observe({
         success:"Image uploaded",
-        loading:"Image Uploading ",
+        loading:"Image Uploading in the file",
         error:({message})=>`${message}`
         }),concatMap((photoURL)=>this.userService.updateUser({uid:user?.uid , photoURL}))
      ).subscribe();
